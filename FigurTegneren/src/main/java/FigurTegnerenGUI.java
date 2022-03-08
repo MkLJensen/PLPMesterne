@@ -1,18 +1,25 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class FigurTegnerenGUI extends JFrame{
-    public static void main(String[] args) {
-        JFrame f=new JFrame();//creating instance of JFrame
 
-        JButton b=new JButton("click");//creating instance of JButton
-        b.setBounds(130,100,100, 40);//x axis, y axis, width, height
+    public FigurTegnerenGUI() throws HeadlessException {
+        setName("FigurTegneren");
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(new Dimension((int) (screenSize.width*0.7), (int) (screenSize.height*0.7)));
 
-        b.addActionListener(e -> JOptionPane.showMessageDialog(b, "Jesper Lugter"));
+        JSplitPane splitLine = new JSplitPane();
+        splitLine.setSize(getSize());
+        splitLine.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+        splitLine.setDividerLocation(0.75);
 
-        f.add(b);//adding button in JFrame
+        final JTextField outputArea = new JTextField(25);
+        JScrollPane scrollText = new JScrollPane(outputArea);
+        outputArea.setEditable(false);
+        splitLine.setRightComponent(scrollText);
+        add(splitLine);
 
-        f.setSize(400,500);//400 width and 500 height
-        f.setLayout(null);//using no layout managers
-        f.setVisible(true);//making the frame visible
+
+
     }
 }
