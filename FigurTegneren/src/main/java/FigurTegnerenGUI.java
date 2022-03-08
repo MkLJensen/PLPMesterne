@@ -1,4 +1,7 @@
+import scala.Int;
+
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class FigurTegnerenGUI extends JFrame{
     public static void main(String[] args) {
@@ -7,8 +10,8 @@ public class FigurTegnerenGUI extends JFrame{
         JButton b=new JButton("click");//creating instance of JButton
         b.setBounds(130,100,100, 40);//x axis, y axis, width, height
 
-        int x = 2;
-        b.addActionListener(e -> JOptionPane.showMessageDialog(b, "Sum is: " + FigurTegnerenScala.fact(10)));
+
+        b.addActionListener(e -> JOptionPane.showMessageDialog(b, "Sum is: " + FigurTegnerenScala.circle(0,0,5,4)));
 
         f.add(b);//adding button in JFrame
 
