@@ -3,7 +3,7 @@ import scala.math._
 object FigurTegnerenScala {
   private final val CIRCLE_SMOOTHNESS = 4;
 
-  def line(x1: Float, x2: Float, y1: Float, y2: Float, counter: Float, x_coords: List[Float], y_coords: List[Float]): List[List[Float]] = {
+  private def line(x1: Float, x2: Float, y1: Float, y2: Float, counter: Float, x_coords: List[Float], y_coords: List[Float]): List[List[Float]] = {
     if (counter == x2) {
       return List[List[Float]](x_coords.reverse, y_coords.reverse);
     }
@@ -17,7 +17,7 @@ object FigurTegnerenScala {
   }
 
   //https://www.mathworks.com/matlabcentral/answers/98665-how-do-i-plot-a-circle-with-a-given-radius-and-center
-  def circle(x: Float, y: Float, r: Float, counter: Int, smoothness: Int, x_coords: List[Double], y_coords: List[Double]): List[List[Double]] = {
+  private def circle(x: Float, y: Float, r: Float, counter: Int, smoothness: Int, x_coords: List[Double], y_coords: List[Double]): List[List[Double]] = {
     if (counter == smoothness + 1) {
       return List[List[Double]](x_coords.reverse, y_coords.reverse);
     }
@@ -30,9 +30,9 @@ object FigurTegnerenScala {
     return circle(x, y, r, 0, smoothness, List[Double](), List[Double]());
   }
 
-  def square(x1: Float, y1: Float, x2: Float, y2: Float, counter_x: Float, counter_y: Float, x_coords: List[Double], y_coords: List[Double]): List[List[Double]] = {
+  private def square(x1: Float, y1: Float, x2: Float, y2: Float, counter_x: Float, counter_y: Float, x_coords: List[Float], y_coords: List[Float]): List[List[Float]] = {
     if (x_coords.length > ((x2-x1) + (y2-y1)) * 2) {
-      return List[List[Double]](x_coords.reverse, y_coords.reverse);
+      return List[List[Float]](x_coords.reverse, y_coords.reverse);
     }
     else {
       if (y_coords.length < y2-y1) {
@@ -50,10 +50,10 @@ object FigurTegnerenScala {
     }
   }
 
-  def square(x1: Float, x2: Float, y1: Float, y2: Float): List[List[Double]] = {
+  def square(x1: Float, x2: Float, y1: Float, y2: Float): List[List[Float]] = {
     if (x1 < x2 && y1 < y2) {
-      return square(x1, y1, x2, y2, x1, y1,List[Double](), List[Double]());
+      return square(x1, y1, x2, y2, x1, y1,List[Float](), List[Float]());
     }
-    return List[List[Double]]();
+    return List[List[Float]]();
   }
 }
