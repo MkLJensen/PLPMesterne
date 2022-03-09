@@ -1,24 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class OutputConsole extends JScrollPane {
-
-    JTextField outputArea = new JTextField(25);
+//public class OutputConsole extends JScrollPane {
+public class OutputConsole extends JTextArea {
+    //final JTextArea outputArea = new JTextArea();
 
     public OutputConsole() {
         super();
-        outputArea.setEditable(false);
-        setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        add(outputArea);
+        setEditable(false);
+        setLineWrap(true);
+        setSize(getSize());
+        setBackground(new Color(192,192,192));
+        setFont(getFont().deriveFont(14f).deriveFont(Font.BOLD));
     }
 
     public void addTextToField(String text){
-        if (outputArea.getText() != null){
-
-            //((JTextField)(outputConsole.getViewport().getView())).setText("HEJ");
-            outputArea.setText(outputArea.getText().concat(text).concat("\r\n"));
-            updateUI();
+        if (getText() != null){
+            setText(getText().concat(text.toUpperCase()).concat("\r\n"));
         }
     }
 

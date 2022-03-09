@@ -13,22 +13,19 @@ public class FigurTegnerenGUI extends JFrame{
         final OutputConsole outputConsole = new OutputConsole();
         final GraphicsPlane graphicsPlane = new GraphicsPlane();
         //final InputConsole inputConsole = new InputConsole(outputConsole);
-
-
+        final JScrollPane scrollPane = new JScrollPane(outputConsole,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 
         final JTextField testInput = new JTextField(25);
         testInput.setEditable(true);
-        testInput.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                outputConsole.addTextToField(testInput.getText());
-                testInput.setText(null);
-            }
+        testInput.addActionListener(e -> {
+            outputConsole.addTextToField(testInput.getText());
+            testInput.setText(null);
         });
 
 
-        JSplitPane HorzSplitLine = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, graphicsPlane, outputConsole);
+        JSplitPane HorzSplitLine = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, graphicsPlane, scrollPane);
         HorzSplitLine.setSize(getSize());
         HorzSplitLine.setDividerLocation(0.75);
 
