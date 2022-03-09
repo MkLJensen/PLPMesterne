@@ -66,7 +66,7 @@ FigurTegneren/.idea/artifacts
 .idea/jarRepositories.xml
 .idea/modules.xml
 */.idea/*.iml
-*/.idea/modules
+FigurTegneren/.idea/modules
 *.iml
 *.ipr
 
