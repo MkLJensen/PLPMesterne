@@ -38,7 +38,9 @@ object FigurTegnerenScala {
     if (r > 0) {
       circle(x, y, r, 0, smoothness, List[Int](), List[Int]()).asJava
     }
-    List[java.util.List[Int]]().asJava
+    else{
+      List[java.util.List[Int]]().asJava
+    }
   }
 
   @tailrec
@@ -64,7 +66,7 @@ object FigurTegnerenScala {
 
   def square(x1: Int, x2: Int, y1: Int, y2: Int): java.util.List[java.util.List[Int]] = {
     if (x1 < x2 && y1 < y2) {
-      square(x1, y1, x2, y2, x1, y1, List[Int](), List[Int]()).asJava
+      square(x1, y1, x2, y2, 0, y1, List[Int](), List[Int]()).asJava
     } else {
       List[java.util.List[Int]]().asJava
     }
