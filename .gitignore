@@ -67,6 +67,7 @@ FigurTegneren/.idea/artifacts
 .idea/modules.xml
 */.idea/*.iml
 FigurTegneren/.idea/modules
+FigurTegneren/.idea/modules/mainGUI-build.iml
 *.iml
 *.ipr
 
