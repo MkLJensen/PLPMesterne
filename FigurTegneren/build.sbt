@@ -6,5 +6,3 @@ lazy val root = (project in file("."))
   .settings(
     name := "mainGUI"
   )
-
-libraryDependencies += "io.github.vincenzopalazzo" % "material-ui-swing" % "1.1.2"
