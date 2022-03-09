@@ -19,7 +19,7 @@ public class InputConsole extends JTextField {
     private class mAction implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            List<List<Object>> buf = FigurTegnerenScala.line((float) 0,(float) 5,(float) 0,(float) 5);
+            List<List<Object>> buf = FigurTegnerenScala.line(0, 5,0, 5);
             outputConsole.addTextToField(getText());
 
 

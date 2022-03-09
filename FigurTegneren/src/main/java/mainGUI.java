@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class mainGUI {
     public static void main(String[] args) {
-        FigurTegnerenScala.circle(0,0,5,30);
+        FigurTegnerenScala.line(0,6, 0,10);
 
         Runnable runnable = () -> {
             JFrame frame = new FigurTegnerenGUI();
