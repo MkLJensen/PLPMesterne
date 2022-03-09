@@ -1,6 +1,8 @@
+import scala.Console;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class InputConsole extends JTextField {
 
@@ -17,7 +19,10 @@ public class InputConsole extends JTextField {
     private class mAction implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+            List<List<Object>> buf = FigurTegnerenScala.line((float) 0,(float) 5,(float) 0,(float) 5);
             outputConsole.addTextToField(getText());
+
+
             setText(null);
         }
     }
