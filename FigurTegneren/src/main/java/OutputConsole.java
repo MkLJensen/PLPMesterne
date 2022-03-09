@@ -1,9 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-//public class OutputConsole extends JScrollPane {
 public class OutputConsole extends JTextArea {
-    //final JTextArea outputArea = new JTextArea();
 
     public OutputConsole() {
         super();
