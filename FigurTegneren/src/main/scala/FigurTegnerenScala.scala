@@ -15,7 +15,12 @@ object FigurTegnerenScala {
   }
 
   def line(x1: Int, x2: Int, y1: Int, y2: Int): java.util.List[java.util.List[Int]] = {
-    line(x1, x2, y1, y2, 0, List[Int](), List[Int]()).asJava
+    if (x1 == x2 && y1 == y2) {
+      List[java.util.List[Int]]().asJava
+    }
+    else {
+      line(x1, x2, y1, y2, 0, List[Int](), List[Int]()).asJava
+    }
   }
 
   //https://www.mathworks.com/matlabcentral/answers/98665-how-do-i-plot-a-circle-with-a-given-radius-and-center
@@ -30,7 +35,10 @@ object FigurTegnerenScala {
   }
 
   def circle(x: Int, y: Int, r: Int, smoothness: Int): java.util.List[java.util.List[Int]] = {
-    circle(x, y, r, 0, smoothness, List[Int](), List[Int]()).asJava
+    if (r > 0) {
+      circle(x, y, r, 0, smoothness, List[Int](), List[Int]()).asJava
+    }
+    List[java.util.List[Int]]().asJava
   }
 
   @tailrec
