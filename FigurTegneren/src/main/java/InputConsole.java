@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
 
 public class InputConsole extends JTextField {
 
@@ -47,14 +49,20 @@ public class InputConsole extends JTextField {
                 /**
                  * DRAW LINE
                  */
-                graphicsPlane.drawPixels(FigurTegnerenScala.line(50,750,50,350), Color.black);
-                inputParsed = true;
+                List<Integer> values = parseTwoCoordinateInput(input);
+                if (values.size() == 4) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
+                    inputParsed = true;
+                }
             }else if(input.contains("RECTANGLE")){
                 /**
                  * DRAW RECTANGLE
                  */
-                graphicsPlane.drawPixels(FigurTegnerenScala.square(50,750,50,350), Color.black);
-                inputParsed = true;
+                List<Integer> values = parseTwoCoordinateInput(input);
+                if (values.size() == 4) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
+                    inputParsed = true;
+                }
             }else if(input.contains("CIRCLE")){
                 /**
                  * DRAW CIRCLE
@@ -90,5 +98,46 @@ public class InputConsole extends JTextField {
         }
     }
 
+    List<Integer> parseTwoCoordinateInput(String input) {
+        List<Integer> res = new ArrayList<Integer>();
+        Pattern p1 = Pattern.compile("\\(\\d+ \\d+\\) \\(\\d+ \\d+\\)");
+        Matcher m1 = p1.matcher(input);
 
+        if (m1.find()) {
+            Pattern p2 = Pattern.compile("-?\\d+");
+            Matcher m2 = p2.matcher(input);
+            while (m2.find()) {
+                res.add(Integer.parseInt(m2.group()));
+            }
+        }
+        return res;
+    }
+
+    List<Integer> parseThreeDigitInput(String input) {
+        List<Integer> res = new ArrayList<Integer>();
+        Pattern pattern = Pattern.compile("\\(\\d+ \\d+ \\d+\\)");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            Pattern integerPattern = Pattern.compile("-?\\d+");
+            matcher = pattern.matcher(input);
+            while (matcher.find()) {
+                res.add(Integer.parseInt(matcher.group()));
+            }
+        }
+        return res;
+    }
 }
+
+/*
+        if (pattern.find()) {
+            Pattern integerPattern = Pattern.compile("-?\\d+");
+            Matcher matcher = integerPattern.matcher(integerPattern.group());
+
+            List<Integer> res = new ArrayList<Integer>();
+
+            while (matcher.find()) {
+                res.add(Integer.parseInt(matcher.group()));
+            }
+        }
+ */
