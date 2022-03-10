@@ -34,7 +34,9 @@ public class GraphicsPlane extends JPanel {
         if (setup && pixels.size() == 2) {
             for (int i = 0; i < pixels.get(0).size(); i++)
             {
-                bi.setRGB((int)pixels.get(0).get(i), (int)pixels.get(1).get(i), color.getRGB());
+                int pixel_x = (int)pixels.get(0).get(i);
+                int pixel_y = getHeight() - (int)pixels.get(1).get(i);
+                bi.setRGB(pixel_x, pixel_y, color.getRGB());
             }
             updateUI();
         }

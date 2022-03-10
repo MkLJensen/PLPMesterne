@@ -59,7 +59,7 @@ public class InputConsole extends JTextField {
                 /**
                  * DRAW CIRCLE
                  */
-                graphicsPlane.drawPixels(FigurTegnerenScala.circle(500,300,300,3000), Color.black);
+                graphicsPlane.drawPixels(FigurTegnerenScala.circle(999/2,668/2,668/2,3000), Color.black);
                 inputParsed = true;
             }else if(input.contains("TEXT-AT")){
                 /**

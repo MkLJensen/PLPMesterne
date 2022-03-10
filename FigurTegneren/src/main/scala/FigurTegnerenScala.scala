@@ -6,11 +6,16 @@ object FigurTegnerenScala {
 
   @tailrec
   private def line(x1: Int, x2: Int, y1: Int, y2: Int, counter: Int, x_coords: List[Int], y_coords: List[Int]): List[java.util.List[Int]] = {
-    if (counter == x2 + 1) {
+    if ((counter == x2 + 1 && x1 != x2) || (x1==x2 && counter == y2)) {
       List[java.util.List[Int]](x_coords.reverse.asJava, y_coords.reverse.asJava)
     }
     else {
-      line(x1, x2, y1, y2, counter + 1, x_coords.::(counter + x1), y_coords.::(((y2 - y1).asInstanceOf[Float] / (x2 - x1).asInstanceOf[Float] * (x1 + counter) + x1).round))
+      if (x1-x2 == 0) {
+        line(x1, x2, y1, y2, counter + 1, x_coords.::(x1), y_coords.::(y1+counter))
+      }
+      else {
+        line(x1, x2, y1, y2, counter + 1, x_coords.::(counter + x1), y_coords.::(((y2 - y1).asInstanceOf[Float] / (x2 - x1).asInstanceOf[Float] * (x1 + counter) + x1).round))
+      }
     }
   }
 
