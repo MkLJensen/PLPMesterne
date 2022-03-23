@@ -11,12 +11,14 @@ public class InputConsole extends JTextField {
 
     private final OutputConsole outputConsole;
     private final GraphicsPlane graphicsPlane;
+    private final FigurTegnerenScala figurTegner;
 
     public InputConsole(OutputConsole _outputConsole, GraphicsPlane _graphicsPlane) {
         super();
         setEditable(true);
         outputConsole = _outputConsole;
         graphicsPlane = _graphicsPlane;
+        figurTegner = new FigurTegnerenScala();
         final mAction action = new mAction();
         addActionListener(action);
     }
@@ -51,7 +53,7 @@ public class InputConsole extends JTextField {
                  */
                 List<Integer> values = parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
+                    graphicsPlane.drawPixels(figurTegner.line(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
                     inputParsed = true;
                 }
             }else if(input.contains("RECTANGLE")){
@@ -60,20 +62,21 @@ public class InputConsole extends JTextField {
                  */
                 List<Integer> values = parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
+                    graphicsPlane.drawPixels(figurTegner.square(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
                     inputParsed = true;
                 }
             }else if(input.contains("CIRCLE")){
                 /**
                  * DRAW CIRCLE
                  */
-                graphicsPlane.drawPixels(FigurTegnerenScala.circle(999/2,668/2,668/2,3000), Color.black);
+                graphicsPlane.drawPixels(figurTegner.circle(999/2,668/2,668/2,3000), Color.black);
                 inputParsed = true;
             }else if(input.contains("TEXT-AT")){
                 /**
                  * DRAW TEXT
                  */
-                graphicsPlane.drawText("Hello World :D", 200, 300);
+
+                graphicsPlane.drawText(input, 200, 300);
 
                 inputParsed = true;
             }else if(input.contains("BOUNDING-BOX")){
