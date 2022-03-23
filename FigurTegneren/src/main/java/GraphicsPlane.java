@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+//https://stackoverflow.com/questions/2163544/re-paint-on-translucent-frame-panel-component/2166500#2166500
+
 public class GraphicsPlane extends JPanel {
 
     boolean setup = false;
@@ -40,6 +42,14 @@ public class GraphicsPlane extends JPanel {
             }
             updateUI();
         }
+    }
+
+    public void drawText(String text, int x, int y) {
+        Graphics2D t = bi.createGraphics();
+        t.setComposite(AlphaComposite.Src);
+        t.setPaint(Color.BLACK);
+        t.drawString(text, x,y);
+        updateUI();
     }
 
     public void clear(Color color) {

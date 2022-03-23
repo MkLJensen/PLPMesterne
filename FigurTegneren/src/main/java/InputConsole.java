@@ -73,6 +73,8 @@ public class InputConsole extends JTextField {
                 /**
                  * DRAW TEXT
                  */
+                graphicsPlane.drawText("Hello World :D", 200, 300);
+
                 inputParsed = true;
             }else if(input.contains("BOUNDING-BOX")){
                 /**
