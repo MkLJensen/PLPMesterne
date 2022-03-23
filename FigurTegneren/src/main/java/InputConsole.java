@@ -67,8 +67,11 @@ public class InputConsole extends JTextField {
                 /**
                  * DRAW CIRCLE
                  */
-                graphicsPlane.drawPixels(FigurTegnerenScala.circle(999/2,668/2,668/2,3000), Color.black);
-                inputParsed = true;
+                List<Integer> values = parseThreeDigitInput(input);
+                if (values.size() == 3) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000), Color.black);
+                    inputParsed = true;
+                }
             }else if(input.contains("TEXT-AT")){
                 /**
                  * DRAW TEXT
@@ -117,14 +120,14 @@ public class InputConsole extends JTextField {
 
     List<Integer> parseThreeDigitInput(String input) {
         List<Integer> res = new ArrayList<Integer>();
-        Pattern pattern = Pattern.compile("\\(\\d+ \\d+ \\d+\\)");
-        Matcher matcher = pattern.matcher(input);
+        Pattern p1 = Pattern.compile("\\(\\d+ \\d+\\) \\d+");
+        Matcher m1 = p1.matcher(input);
 
-        if (matcher.find()) {
-            Pattern integerPattern = Pattern.compile("-?\\d+");
-            matcher = pattern.matcher(input);
-            while (matcher.find()) {
-                res.add(Integer.parseInt(matcher.group()));
+        if (m1.find()) {
+            Pattern p2 = Pattern.compile("-?\\d+");
+            Matcher m2 = p2.matcher(input);
+            while (m2.find()) {
+                res.add(Integer.parseInt(m2.group()));
             }
         }
         return res;
