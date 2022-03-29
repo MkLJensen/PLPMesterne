@@ -29,7 +29,7 @@ public class GraphicsPlane extends JPanel {
             }
         }
         setup = true;
-        clear(Color.WHITE);
+        fill(Color.WHITE);
     }
 
     public void drawPixels(List<List<Object>> pixels, Color color) {
@@ -52,16 +52,31 @@ public class GraphicsPlane extends JPanel {
         updateUI();
     }
 
-    public void clear(Color color) {
+    public void fill(Color color) {
         if (setup) {
             for (int x = 0; x < bi.getWidth(); x++)
             {
                 for (int y = 0; y < bi.getHeight(); y++)
                 {
-                    bi.setRGB(x, y, Color.WHITE.getRGB());
+                    bi.setRGB(x, y, color.getRGB());
                 }
             }
             updateUI();
         }
     }
+
+    public void fillRectangle(Color color, int x1, int y1, int x2, int y2) {
+        if (setup) {
+            for (int x = x1; x < x2; x++)
+            {
+                for (int y = getHeight() - y1; y > getHeight()-y2; y--)
+                {
+                    bi.setRGB(x, y, color.getRGB());
+                }
+            }
+            updateUI();
+        }
+    }
+
+
 }

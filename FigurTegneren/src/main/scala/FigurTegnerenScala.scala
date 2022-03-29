@@ -4,13 +4,34 @@ import scala.collection.mutable.ListBuffer
 import scala.math._
 import scala.jdk.CollectionConverters._
 
-class BoundingBox(var bottomLeftCoordinate: (Int, Int) = (50,50), var topRightCoordinate: (Int, Int) = (100, 100)) {
+class BoundingBox(private var maxX: Int, private var maxY: Int) {
+
+  private var _bottomLeftCoordinate: (Int, Int) = _
+  private var _topRightCoordinate: (Int, Int) = _
+
+
+  def setBottomLeftCoordinate(x: Int, y: Int): Unit = {
+    if((x > 0) & (y > 0)) _bottomLeftCoordinate = (x,y) else printWarning()
+  }
+
+  def setTopRightCoordinate(x: Int, y: Int): Unit = {
+    if((x < maxX) & (y < maxY)) _topRightCoordinate = (x,y) else printWarning()
+  }
+
+  def getBottomLeftCoordinate() : (Int, Int) = {
+    _bottomLeftCoordinate
+  }
+
+  def getTopRightCoordinate() : (Int, Int) = {
+    _topRightCoordinate
+  }
+  private def printWarning(): Unit = println("WARNING: Out of bounds")
 
 }
 
-class FigurTegnerenScala {
+class FigurTegnerenScala(private var maxX: Int, private var maxY: Int) {
 
-  var boundingBox: BoundingBox = new BoundingBox();
+  var boundingBox: BoundingBox = new BoundingBox(maxX, maxY)
 
   private def clipBoundingBox(coords: List[List[Int]] ): List[java.util.List[Int]]  = {
     val newXCoordinates = new ListBuffer[Int]()
@@ -19,10 +40,11 @@ class FigurTegnerenScala {
     val xValues = coords(0)
     val yValues = coords(1)
 
-    for(i <- 0 to xValues.length-1) {
+    for(i <- xValues.indices) {
       val x = xValues(i)
       val y = yValues(i)
-      if((x >= boundingBox.bottomLeftCoordinate._1 && x <= boundingBox.topRightCoordinate._1) && (y >= boundingBox.bottomLeftCoordinate._2 && y <= boundingBox.topRightCoordinate._2)) {
+      if((x >= boundingBox.getBottomLeftCoordinate()._1 && x <= boundingBox.getTopRightCoordinate()._1) &&
+        (y >= boundingBox.getBottomLeftCoordinate()._2 && y <= boundingBox.getTopRightCoordinate()._2)) {
         newXCoordinates += x
         newYCoordinates += y
       }

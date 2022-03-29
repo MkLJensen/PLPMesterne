@@ -7,18 +7,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.List;
 
+import scala.Int;
+import scala.Tuple2;
+
 public class InputConsole extends JTextField {
 
     private final OutputConsole outputConsole;
     private final GraphicsPlane graphicsPlane;
-    private final FigurTegnerenScala figurTegner;
+    private FigurTegnerenScala figurTegner;
 
     public InputConsole(OutputConsole _outputConsole, GraphicsPlane _graphicsPlane) {
         super();
         setEditable(true);
         outputConsole = _outputConsole;
         graphicsPlane = _graphicsPlane;
-        figurTegner = new FigurTegnerenScala();
         final mAction action = new mAction();
         addActionListener(action);
     }
@@ -38,6 +40,10 @@ public class InputConsole extends JTextField {
     private class mAction implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            if (figurTegner == null){
+                figurTegner = new FigurTegnerenScala(graphicsPlane.getWidth(), graphicsPlane.getHeight());
+            }
 
             String input = getText().toUpperCase();
             boolean inputParsed = false;
@@ -80,6 +86,42 @@ public class InputConsole extends JTextField {
 
                 inputParsed = true;
             }else if(input.contains("BOUNDING-BOX")){
+
+                /**
+                 * Changing Bounding Box Value in Scala
+                 */
+
+                List<Integer> coords;
+                coords = parseTwoCoordinateInput(input);
+                //(BOUNDING-BOX (50 50) (500 500))
+                if (coords.size() != 4){
+                    JOptionPane.showMessageDialog(null, "ERROR IN COMMAND");
+                }else{
+                    figurTegner.boundingBox().setBottomLeftCoordinate(coords.get(0), coords.get(1));
+                    figurTegner.boundingBox().setTopRightCoordinate(coords.get(2), coords.get(3));
+                }
+
+                if ((figurTegner.boundingBox().getTopRightCoordinate()._1() == null) ||
+                    (figurTegner.boundingBox().getTopRightCoordinate()._2() == null) ||
+                    (figurTegner.boundingBox().getBottomLeftCoordinate()._1() == null) ||
+                    (figurTegner.boundingBox().getBottomLeftCoordinate()._2() == null))
+                {
+                    JOptionPane.showMessageDialog(null, "Bounding Box Outside of Area");
+                }else{
+                    graphicsPlane.drawPixels(figurTegner.square((Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._1(),
+                                                                (Integer) figurTegner.boundingBox().getTopRightCoordinate()._1(),
+                                                                (Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._2(),
+                                                                (Integer) figurTegner.boundingBox().getTopRightCoordinate()._2()), Color.black);
+                    graphicsPlane.fillRectangle(Color.GRAY, (Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._1(),
+                                                            (Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._2(),
+                                                            (Integer) figurTegner.boundingBox().getTopRightCoordinate()._1(),
+                                                            (Integer) figurTegner.boundingBox().getTopRightCoordinate()._2());
+                }
+
+
+
+
+
                 /**
                  * DRAW BOUNDING BOX
                  */
@@ -90,7 +132,7 @@ public class InputConsole extends JTextField {
                  */
                 inputParsed = true;
             }else if(input.compareTo("CLR") == 0){
-                graphicsPlane.clear(Color.WHITE);
+                graphicsPlane.fill(Color.WHITE);
                 inputParsed = true;
             }
 
