@@ -73,10 +73,12 @@ public class InputConsole extends JTextField {
                     inputParsed = true;
                 }
             }else if(input.contains("TEXT-AT")){
-                /**
-                 * DRAW TEXT
-                 */
-                graphicsPlane.drawText("Hello World :D", 200, 300);
+                // Wow these first two lines are UGLY
+                String[] lol = input.split(" ");
+                String text = lol[3].replaceAll("\\)", "");
+
+                List<Integer> coords = parseDigitsFromStringInput(input);
+                graphicsPlane.drawText(text, coords.get(0), coords.get(1));
 
                 inputParsed = true;
             }else if(input.contains("BOUNDING-BOX")){
@@ -129,6 +131,22 @@ public class InputConsole extends JTextField {
             while (m2.find()) {
                 res.add(Integer.parseInt(m2.group()));
             }
+        }
+        return res;
+    }
+
+    List<Integer> parseDigitsFromStringInput(String input){
+        //Returns all digits in a string as a list of integers
+
+        List<Integer> res = new ArrayList<Integer>();
+
+        input = input.replaceAll("[^\\d]", " ");
+        input = input.trim();
+        input = input.replaceAll(" +", " ");
+        String[] integerStrings = input.split(" ");
+
+        for (String string: integerStrings){
+            res.add(Integer.parseInt(string));
         }
         return res;
     }
