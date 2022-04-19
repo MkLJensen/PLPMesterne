@@ -44,12 +44,18 @@ public class GraphicsPlane extends JPanel {
         }
     }
 
-    public void drawText(String text, int x, int y) {
+    public void drawText(String text, int x, int y, int screenHeight) {
         Graphics2D t = bi.createGraphics();
         t.setComposite(AlphaComposite.Src);
         t.setPaint(Color.BLACK);
-        t.drawString(text, x,y);
+        Tuple<Integer, Integer> converted = convertTextCoordinates(x,y, screenHeight);
+        t.drawString(text, converted.getFirst(),converted.getSecond());
         updateUI();
+    }
+
+    private Tuple<Integer, Integer> convertTextCoordinates(int x, int y, int screenHeight) {
+        int convertedY = screenHeight - y;
+        return new Tuple<>(x, convertedY);
     }
 
     public void fill(Color color) {

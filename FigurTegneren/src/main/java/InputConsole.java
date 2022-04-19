@@ -79,11 +79,10 @@ public class InputConsole extends JTextField {
                 }
             }else if(input.contains("TEXT-AT")){
                 // Wow these first two lines are UGLY
-                String[] lol = input.split(" ");
-                String text = lol[3].replaceAll("\\)", "");
-
-                List<Integer> coords = parseDigitsFromStringInput(input);
-                graphicsPlane.drawText(text, coords.get(0), coords.get(1));
+                String[] fullInput = input.split("\\) ");
+                String text = fullInput[1];
+                List<Integer> coords = parseDigitsFromStringInput(fullInput[0]);
+                graphicsPlane.drawText(text.substring(0, text.length()-1), coords.get(0), coords.get(1), graphicsPlane.getHeight());
 
                 inputParsed = true;
             }else if(input.contains("BOUNDING-BOX")){
