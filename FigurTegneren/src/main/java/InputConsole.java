@@ -37,7 +37,6 @@ public class InputConsole extends JTextField {
      * (FILL c g)                               c = color, g = object to draw
      */
 
-
     private class mAction implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -50,6 +49,23 @@ public class InputConsole extends JTextField {
                  * MULTIPLE FIGURE NEEDS TO BE DRAWN
                  */
                 inputParsed = true;
+            }else if(input.contains("FILL") & input.contains("RECTANGLE")) {
+                /**
+                 * FILL OBJECT WITH COLOR
+                 */
+                List<Integer> values = parseTwoCoordinateInput(input);
+                if (values.size() == 4) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), Color.black);
+                    inputParsed = true;
+                }
+
+                inputParsed = true;
+            }else if(input.contains("FILL") & input.contains("CIRCLE")) {
+                List<Integer> values = parseThreeDigitInput(input);
+                if (values.size() == 3) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), Color.black);
+                    inputParsed = true;
+                }
             }else if (input.contains("LINE")){
                 /**
                  * DRAW LINE
@@ -65,7 +81,7 @@ public class InputConsole extends JTextField {
                  */
                 List<Integer> values = parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, false), Color.black);
                     inputParsed = true;
                 }
             }else if(input.contains("CIRCLE")){
@@ -74,7 +90,7 @@ public class InputConsole extends JTextField {
                  */
                 List<Integer> values = parseThreeDigitInput(input);
                 if (values.size() == 3) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox), Color.black);
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, false), Color.black);
                     inputParsed = true;
                 }
             }else if(input.contains("TEXT-AT")){
@@ -132,11 +148,23 @@ public class InputConsole extends JTextField {
                  * DRAW BOUNDING BOX
                  */
                 inputParsed = true;
-            }else if(input.contains("FILL")){
+            }else if(input.contains("FILL") & input.contains("RECTANGLE")) {
                 /**
                  * FILL OBJECT WITH COLOR
                  */
+                List<Integer> values = parseTwoCoordinateInput(input);
+                if (values.size() == 4) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), Color.black);
+                    inputParsed = true;
+                }
+
                 inputParsed = true;
+            }else if(input.contains("FILL") & input.contains("CIRCLE")) {
+                List<Integer> values = parseThreeDigitInput(input);
+                if (values.size() == 3) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), Color.black);
+                    inputParsed = true;
+                }
             }else if(input.compareTo("CLR") == 0){
                 graphicsPlane.fill(Color.WHITE);
                 boundingBox = null;

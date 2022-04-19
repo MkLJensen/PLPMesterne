@@ -100,9 +100,14 @@ object FigurTegnerenScala {
              y: Int,
              r: Int,
              smoothness: Int,
-             boundingBox: BoundingBox): java.util.List[java.util.List[Int]] = {
+             boundingBox: BoundingBox,
+             fill: Boolean): java.util.List[java.util.List[Int]] = {
     if (r > 0) {
-      clipBoundingBox(boundingBox, circle(x, y, r, 0, smoothness, List[Int](), List[Int]())).asJava
+      if(!fill) {
+        clipBoundingBox(boundingBox, circle(x, y, r, 0, smoothness, List[Int](), List[Int]())).asJava
+      } else {
+        clipBoundingBox(boundingBox, filledCircle(x, y, r, 0, smoothness, List[Int](), List[Int]())).asJava
+      }
     }
     else{
       List[java.util.List[Int]]().asJava
@@ -134,11 +139,52 @@ object FigurTegnerenScala {
              x2: Int,
              y1: Int,
              y2: Int,
-             boundingBox: BoundingBox): java.util.List[java.util.List[Int]] = {
+             boundingBox: BoundingBox,
+             fill: Boolean = false): java.util.List[java.util.List[Int]] = {
     if (x1 < x2 && y1 < y2) {
-      clipBoundingBox(boundingBox, square(x1, y1, x2, y2, 0, y1, List[Int](), List[Int]())).asJava
+      if(!fill) {
+        clipBoundingBox(boundingBox, square(x1, y1, x2, y2, 0, y1, List[Int](), List[Int]())).asJava
+      } else {
+        clipBoundingBox(boundingBox, filledSquare(x1, y1, x2, y2, List[Int](), List[Int]())).asJava
+      }
     } else {
       List[java.util.List[Int]]().asJava
+    }
+  }
+
+  private def filledCircle(x: Int, y: Int, r: Int, counter: Int, smoothness: Int, x_coords: List[Int], y_coords: List[Int]): List[List[Int]] = {
+    if (r<=0) {
+      List(x_coords.reverse, y_coords.reverse)
+    }
+    else {
+      if(counter == smoothness + 1){
+        filledCircle(x, y, r-1, 0, smoothness, x_coords, y_coords)
+      } else {
+        filledCircle(x, y, r, counter + 1, smoothness, x_coords.::((cos(((Pi * 2) / smoothness) * counter) * r + x).round.asInstanceOf[Int]), y_coords.::((sin(((Pi * 2) / smoothness) * counter) * r + y).asInstanceOf[Int]))
+      }
+    }
+  }
+
+  private def filledSquare(x1: Int,
+                           y1: Int,
+                           x2: Int,
+                           y2: Int,
+                           xCoords: List[Int],
+                           yCoords: List[Int]): List[List[Int]] = {
+    if(x1 >= x2){
+      List[List[Int]](xCoords, yCoords)
+    } else {
+      val yCoordinates = y1 to y2 by 1
+      val xCoordinates = List.fill(yCoordinates.length)(x1)
+      filledSquare(x1+1, y1, x2, y2, xCoords++xCoordinates, yCoords++yCoordinates)
+
+      /* Other solution. Both seem slow
+      if(y1 >= y2) {
+        filledSquare(x1+1, yCoords.last, x2, y2, xCoords.::(x1), yCoords.::(y1))
+      } else {
+        filledSquare(x1, y1+1, x2, y2, xCoords.::(x1), yCoords.::(y1))
+      }
+      */
     }
   }
 }
