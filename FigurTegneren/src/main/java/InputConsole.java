@@ -14,13 +14,14 @@ public class InputConsole extends JTextField {
 
     private final OutputConsole outputConsole;
     private final GraphicsPlane graphicsPlane;
-    private FigurTegnerenScala figurTegner;
+    private BoundingBox boundingBox;
 
     public InputConsole(OutputConsole _outputConsole, GraphicsPlane _graphicsPlane) {
         super();
         setEditable(true);
         outputConsole = _outputConsole;
         graphicsPlane = _graphicsPlane;
+        boundingBox = null;
         final mAction action = new mAction();
         addActionListener(action);
     }
@@ -41,10 +42,6 @@ public class InputConsole extends JTextField {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            if (figurTegner == null){
-                figurTegner = new FigurTegnerenScala(graphicsPlane.getWidth(), graphicsPlane.getHeight());
-            }
-
             String input = getText().toUpperCase();
             boolean inputParsed = false;
 
@@ -59,7 +56,7 @@ public class InputConsole extends JTextField {
                  */
                 List<Integer> values = parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
-                    graphicsPlane.drawPixels(figurTegner.line(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
+                    graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
                     inputParsed = true;
                 }
             }else if(input.contains("RECTANGLE")){
@@ -68,7 +65,7 @@ public class InputConsole extends JTextField {
                  */
                 List<Integer> values = parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
-                    graphicsPlane.drawPixels(figurTegner.square(values.get(0),values.get(2),values.get(1),values.get(3)), Color.black);
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
                     inputParsed = true;
                 }
             }else if(input.contains("CIRCLE")){
@@ -77,7 +74,7 @@ public class InputConsole extends JTextField {
                  */
                 List<Integer> values = parseThreeDigitInput(input);
                 if (values.size() == 3) {
-                    graphicsPlane.drawPixels(figurTegner.circle(values.get(0),values.get(1),values.get(2),3000), Color.black);
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox), Color.black);
                     inputParsed = true;
                 }
             }else if(input.contains("TEXT-AT")){
@@ -94,36 +91,42 @@ public class InputConsole extends JTextField {
                  * Changing Bounding Box Value in Scala
                  */
 
+                if(boundingBox == null) {
+                    boundingBox = new BoundingBox(graphicsPlane.getWidth(), graphicsPlane.getHeight());
+                }
+
                 List<Integer> coords;
                 coords = parseTwoCoordinateInput(input);
                 //(BOUNDING-BOX (50 50) (500 500))
                 if (coords.size() != 4){
                     JOptionPane.showMessageDialog(null, "ERROR IN COMMAND");
                 }else{
-                    figurTegner.boundingBox().setBottomLeftCoordinate(coords.get(0), coords.get(1));
-                    figurTegner.boundingBox().setTopRightCoordinate(coords.get(2), coords.get(3));
+                    boundingBox.setBottomLeftCoordinate(coords.get(0), coords.get(1));
+                    boundingBox.setTopRightCoordinate(coords.get(2), coords.get(3));
                 }
 
-                if ((figurTegner.boundingBox().getTopRightCoordinate()._1() == null) ||
-                    (figurTegner.boundingBox().getTopRightCoordinate()._2() == null) ||
-                    (figurTegner.boundingBox().getBottomLeftCoordinate()._1() == null) ||
-                    (figurTegner.boundingBox().getBottomLeftCoordinate()._2() == null))
+                /*
+                if ((boundingBox.getTopRightCoordinate()._1() == null) ||
+                    (boundingBox.getTopRightCoordinate()._2() == null) ||
+                    (boundingBox.getBottomLeftCoordinate()._1() == null) ||
+                    (boundingBox.getBottomLeftCoordinate()._2() == null))
                 {
                     JOptionPane.showMessageDialog(null, "Bounding Box Outside of Area");
-                }else{
-                    graphicsPlane.drawPixels(figurTegner.square((Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._1(),
-                                                                (Integer) figurTegner.boundingBox().getTopRightCoordinate()._1(),
-                                                                (Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._2(),
-                                                                (Integer) figurTegner.boundingBox().getTopRightCoordinate()._2()), Color.black);
-                    graphicsPlane.fillRectangle(Color.GRAY, (Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._1(),
-                                                            (Integer) figurTegner.boundingBox().getBottomLeftCoordinate()._2(),
-                                                            (Integer) figurTegner.boundingBox().getTopRightCoordinate()._1(),
-                                                            (Integer) figurTegner.boundingBox().getTopRightCoordinate()._2());
                 }
+                */
 
-
-
-
+                /* Dont think we need to draw this?
+                else{
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square((Integer) boundingBox.getBottomLeftCoordinate()._1(),
+                                                                (Integer) boundingBox.getTopRightCoordinate()._1(),
+                                                                (Integer) boundingBox.getBottomLeftCoordinate()._2(),
+                                                                (Integer) boundingBox.getTopRightCoordinate()._2()), Color.black);
+                    graphicsPlane.fillRectangle(Color.GRAY, (Integer) boundingBox.getBottomLeftCoordinate()._1(),
+                                                            (Integer) boundingBox.getBottomLeftCoordinate()._2(),
+                                                            (Integer) boundingBox.getTopRightCoordinate()._1(),
+                                                            (Integer) boundingBox.getTopRightCoordinate()._2());
+                }
+                */
 
                 /**
                  * DRAW BOUNDING BOX

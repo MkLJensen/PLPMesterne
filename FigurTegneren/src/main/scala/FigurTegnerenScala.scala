@@ -9,13 +9,12 @@ class BoundingBox(private var maxX: Int, private var maxY: Int) {
   private var _bottomLeftCoordinate: (Int, Int) = _
   private var _topRightCoordinate: (Int, Int) = _
 
-
   def setBottomLeftCoordinate(x: Int, y: Int): Unit = {
-    if((x > 0) & (y > 0)) _bottomLeftCoordinate = (x,y) else printWarning()
+    if((x >= 0) & (y >= 0)) _bottomLeftCoordinate = (x,y) else printWarning()
   }
 
   def setTopRightCoordinate(x: Int, y: Int): Unit = {
-    if((x < maxX) & (y < maxY)) _topRightCoordinate = (x,y) else printWarning()
+    if((x <= maxX) & (y <= maxY)) _topRightCoordinate = (x,y) else printWarning()
   }
 
   def getBottomLeftCoordinate() : (Int, Int) = {
@@ -29,11 +28,16 @@ class BoundingBox(private var maxX: Int, private var maxY: Int) {
 
 }
 
-class FigurTegnerenScala(private var maxX: Int, private var maxY: Int) {
+object FigurTegnerenScala {
 
-  var boundingBox: BoundingBox = new BoundingBox(maxX, maxY)
+  private def clipBoundingBox(boundingBox: BoundingBox,
+                              coords: List[List[Int]] ): List[java.util.List[Int]]  = {
+    if(boundingBox == null ||
+      boundingBox.getBottomLeftCoordinate() == null ||
+      boundingBox.getTopRightCoordinate() == null) {
+      return List(coords(0).asJava, coords(1).asJava)
+    }
 
-  private def clipBoundingBox(coords: List[List[Int]] ): List[java.util.List[Int]]  = {
     val newXCoordinates = new ListBuffer[Int]()
     val newYCoordinates = new ListBuffer[Int]()
 
@@ -54,9 +58,9 @@ class FigurTegnerenScala(private var maxX: Int, private var maxY: Int) {
   }
 
   @tailrec
-  private def line(x1: Int, x2: Int, y1: Int, y2: Int, counter: Int, x_coords: List[Int], y_coords: List[Int]): List[java.util.List[Int]] = {
+  private def line(x1: Int, x2: Int, y1: Int, y2: Int, counter: Int, x_coords: List[Int], y_coords: List[Int]): List[List[Int]] = {
     if ((counter == x2 - x1 + 1 && x1 != x2) || (y_coords.reverse.last == y2 && x_coords.reverse.last == x2) || (x1==x2 && counter == y2)) {
-      List[java.util.List[Int]](x_coords.reverse.asJava, y_coords.reverse.asJava)
+      List(x_coords.reverse, y_coords.reverse)
     }
     else {
       if (x1-x2 == 0) {
@@ -68,29 +72,37 @@ class FigurTegnerenScala(private var maxX: Int, private var maxY: Int) {
     }
   }
 
-  def line(x1: Int, x2: Int, y1: Int, y2: Int): java.util.List[java.util.List[Int]] = {
+  def line(x1: Int,
+           x2: Int,
+           y1: Int,
+           y2: Int,
+           boundingBox: BoundingBox): java.util.List[java.util.List[Int]] = {
     if (x1 == x2 && y1 == y2) {
       List[java.util.List[Int]]().asJava
     }
     else {
-      line(x1, x2, y1, y2, 1, List[Int](x1), List[Int](y1)).asJava
+      clipBoundingBox(boundingBox, line(x1, x2, y1, y2, 1, List[Int](x1), List[Int](y1))).asJava
     }
   }
 
   //https://www.mathworks.com/matlabcentral/answers/98665-how-do-i-plot-a-circle-with-a-given-radius-and-center
   @tailrec
-  private def circle(x: Int, y: Int, r: Int, counter: Int, smoothness: Int, x_coords: List[Int], y_coords: List[Int]): List[java.util.List[Int]] = {
+  private def circle(x: Int, y: Int, r: Int, counter: Int, smoothness: Int, x_coords: List[Int], y_coords: List[Int]): List[List[Int]] = {
     if (counter == smoothness + 1) {
-      List[java.util.List[Int]](x_coords.reverse.asJava, y_coords.reverse.asJava)
+      List(x_coords.reverse, y_coords.reverse)
     }
     else {
       circle(x, y, r, counter + 1, smoothness, x_coords.::((cos(((Pi * 2) / smoothness) * counter) * r + x).round.asInstanceOf[Int]), y_coords.::((sin(((Pi * 2) / smoothness) * counter) * r + y).asInstanceOf[Int]))
     }
   }
 
-  def circle(x: Int, y: Int, r: Int, smoothness: Int): java.util.List[java.util.List[Int]] = {
+  def circle(x: Int,
+             y: Int,
+             r: Int,
+             smoothness: Int,
+             boundingBox: BoundingBox): java.util.List[java.util.List[Int]] = {
     if (r > 0) {
-      circle(x, y, r, 0, smoothness, List[Int](), List[Int]()).asJava
+      clipBoundingBox(boundingBox, circle(x, y, r, 0, smoothness, List[Int](), List[Int]())).asJava
     }
     else{
       List[java.util.List[Int]]().asJava
@@ -98,9 +110,9 @@ class FigurTegnerenScala(private var maxX: Int, private var maxY: Int) {
   }
 
   @tailrec
-  private def square(x1: Int, y1: Int, x2: Int, y2: Int, counter_x: Int, counter_y: Int, x_coords: List[Int], y_coords: List[Int]): List[java.util.List[Int]] = {
+  private def square(x1: Int, y1: Int, x2: Int, y2: Int, counter_x: Int, counter_y: Int, x_coords: List[Int], y_coords: List[Int]): List[List[Int]] = {
     if (x_coords.length > ((x2 - x1) + (y2 - y1)) * 2) {
-      List[java.util.List[Int]](x_coords.reverse.asJava, y_coords.reverse.asJava)
+      List[List[Int]](x_coords.reverse, y_coords.reverse)
     }
     else {
       if (y_coords.length < y2 - y1) {
@@ -118,9 +130,13 @@ class FigurTegnerenScala(private var maxX: Int, private var maxY: Int) {
     }
   }
 
-  def square(x1: Int, x2: Int, y1: Int, y2: Int): java.util.List[java.util.List[Int]] = {
+  def square(x1: Int,
+             x2: Int,
+             y1: Int,
+             y2: Int,
+             boundingBox: BoundingBox): java.util.List[java.util.List[Int]] = {
     if (x1 < x2 && y1 < y2) {
-      square(x1, y1, x2, y2, 0, y1, List[Int](), List[Int]()).asJava
+      clipBoundingBox(boundingBox, square(x1, y1, x2, y2, 0, y1, List[Int](), List[Int]())).asJava
     } else {
       List[java.util.List[Int]]().asJava
     }
