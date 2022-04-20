@@ -57,18 +57,35 @@ object FigurTegnerenScala {
     return List(newXCoordinates.asJava, newYCoordinates.asJava)
   }
 
+  private def lineRunner(x1: Int, x2: Int, y1: Int, y2: Int): List[List[Int]] = {
+    val dx = (x2-x1).abs
+    val dy = (y2-y1).abs
+
+    if(dx >= dy) {
+      if(dy != 0) {
+        lineImpl(x1, x2, y1, y2, x1.toFloat, y1.toFloat, 1, dy.toFloat/dx.toFloat, dx, 1, List[Int](x1), List[Int](y1))
+      }
+      else {
+        lineImpl(x1, x2, y1, y2, x1.toFloat, y1.toFloat, 1, 0, dx, 1, List[Int](x1), List[Int](y1))
+      }
+    }
+    else {
+      if (dx != 0) {
+        lineImpl(x1, x2, y1, y2,x1.toFloat, y1.toFloat, dx.toFloat/dy.toFloat, 1, dy, 1, List[Int](x1), List[Int](y1))
+      }
+      else {
+        lineImpl(x1, x2, y1, y2,x1.toFloat, y1.toFloat, 0, 1, dy, 1, List[Int](x1), List[Int](y1))
+      }
+    }
+  }
+
   @tailrec
-  private def line(x1: Int, x2: Int, y1: Int, y2: Int, counter: Int, x_coords: List[Int], y_coords: List[Int]): List[List[Int]] = {
-    if ((counter == x2 - x1 + 1 && x1 != x2) || (y_coords.reverse.last == y2 && x_coords.reverse.last == x2) || (x1==x2 && counter == y2)) {
+  private def lineImpl(x1: Int, x2: Int, y1: Int, y2: Int, x_old: Float, y_old: Float, dx: Float, dy: Float, step: Int, counter: Int, x_coords: List[Int], y_coords: List[Int]): List[List[Int]] = {
+    if (counter > step) {
       List(x_coords.reverse, y_coords.reverse)
     }
     else {
-      if (x1-x2 == 0) {
-        line(x1, x2, y1, y2, counter + 1, x_coords.::(x1), y_coords.::(y1+counter))
-      }
-      else {
-        line(x1, x2, y1, y2, counter + 1, x_coords.::(counter + x1), y_coords.::(((y2 - y1).asInstanceOf[Float] / (x2 - x1).asInstanceOf[Float] * counter + y1).round))
-      }
+      lineImpl(x1, x2, y1, y2, x_old + dx, y_old + dy, dx, dy, step, counter + 1, x_coords.::((x_old + dx).round), y_coords.::((y_old + dy).round))
     }
   }
 
@@ -81,7 +98,7 @@ object FigurTegnerenScala {
       List[java.util.List[Int]]().asJava
     }
     else {
-      clipBoundingBox(boundingBox, line(x1, x2, y1, y2, 1, List[Int](x1), List[Int](y1))).asJava
+      clipBoundingBox(boundingBox, lineRunner(x1, x2, y1, y2)).asJava
     }
   }
 
@@ -158,7 +175,7 @@ object FigurTegnerenScala {
     }
     else {
       if(counter == smoothness + 1){
-        filledCircle(x, y, r-1, 0, smoothness, x_coords, y_coords)
+        filledCircle(x, y, r-1, 0, smoothness-4, x_coords, y_coords)
       } else {
         filledCircle(x, y, r, counter + 1, smoothness, x_coords.::((cos(((Pi * 2) / smoothness) * counter) * r + x).round.asInstanceOf[Int]), y_coords.::((sin(((Pi * 2) / smoothness) * counter) * r + y).asInstanceOf[Int]))
       }
