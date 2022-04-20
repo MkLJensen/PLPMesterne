@@ -37,147 +37,150 @@ public class InputConsole extends JTextField {
      * (FILL c g)                               c = color, g = object to draw
      */
 
+    private static class PatternMatcher {
+        enum CommandType {
+            Line,
+            Circle,
+            Rectangle,
+            FillCircle,
+            FillRectangle,
+            BoundingBox,
+            TextAt,
+            Clear,
+            Unknown
+        }
+
+        static Pattern recPattern = Pattern.compile("\\(RECTANGLE\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
+        static Pattern circPattern = Pattern.compile("\\(CIRCLE\\s\\(\\d+\\s\\d+\\)\\s\\d+\\)", Pattern.CASE_INSENSITIVE);
+        static Pattern linePattern = Pattern.compile("\\(LINE\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
+        static Pattern filledCircPattern = Pattern.compile("\\(FILL\\s[a-z]\\s\\(RECTANGLE\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
+        static Pattern filledRecPattern = Pattern.compile("\\(FILL\\s[a-z]\\s\\(CIRCLE\\(\\d+\\s\\d+\\)\\s\\d+\\)", Pattern.CASE_INSENSITIVE);
+        static Pattern bbPattern = Pattern.compile("\\(BOUNDING-BOX\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
+        static Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\(\\d+\\s\\d+\\)\\s.*\\)", Pattern.CASE_INSENSITIVE);
+        static Pattern clrPattern = Pattern.compile("(CLR)", Pattern.CASE_INSENSITIVE);
+
+        public static CommandType matchCommand(String input) {
+            if(recPattern.matcher(input).find()) {
+                return CommandType.Rectangle;
+            } else if (circPattern.matcher(input).find()) {
+                return CommandType.Circle;
+            } else if (linePattern.matcher(input).find()) {
+                return CommandType.Line;
+            } else if (filledCircPattern.matcher(input).find()) {
+                return CommandType.FillCircle;
+            } else if (filledRecPattern.matcher(input).find()) {
+                return CommandType.FillRectangle;
+            } else if (bbPattern.matcher(input).find()) {
+                return CommandType.BoundingBox;
+            } else if (textAtPattern.matcher(input).find()) {
+                return CommandType.TextAt;
+            } else if (clrPattern.matcher(input).find()) {
+                return CommandType.Clear;
+            } else {
+                return CommandType.Unknown;
+            }
+        }
+    }
+
     private class mAction implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
 
             String input = getText().toUpperCase();
-            boolean inputParsed = false;
 
-            if (input.contains("DRAW")){
-                /**
-                 * MULTIPLE FIGURE NEEDS TO BE DRAWN
-                 */
-                inputParsed = true;
-            }else if(input.contains("FILL") & input.contains("RECTANGLE")) {
-                /**
-                 * FILL OBJECT WITH COLOR
-                 */
-                List<Integer> values = parseTwoCoordinateInput(input);
-                if (values.size() == 4) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), Color.black);
-                    inputParsed = true;
-                }
+            List<Integer> values;
+            PatternMatcher.CommandType commandType = PatternMatcher.matchCommand(input);
 
-                inputParsed = true;
-            }else if(input.contains("FILL") & input.contains("CIRCLE")) {
-                List<Integer> values = parseThreeDigitInput(input);
-                if (values.size() == 3) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), Color.black);
-                    inputParsed = true;
-                }
-            }else if (input.contains("LINE")){
-                /**
-                 * DRAW LINE
-                 */
-                List<Integer> values = parseTwoCoordinateInput(input);
-                if (values.size() == 4) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
-                    inputParsed = true;
-                }
-            }else if(input.contains("RECTANGLE")){
-                /**
-                 * DRAW RECTANGLE
-                 */
-                List<Integer> values = parseTwoCoordinateInput(input);
-                if (values.size() == 4) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, false), Color.black);
-                    inputParsed = true;
-                }
-            }else if(input.contains("CIRCLE")){
-                /**
-                 * DRAW CIRCLE
-                 */
-                List<Integer> values = parseThreeDigitInput(input);
-                if (values.size() == 3) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, false), Color.black);
-                    inputParsed = true;
-                }
-            }else if(input.contains("TEXT-AT")){
-                // Wow these first two lines are UGLY
-                String[] fullInput = input.split("\\) ");
-                String text = fullInput[1];
-                List<Integer> coords = parseDigitsFromStringInput(fullInput[0]);
-                graphicsPlane.drawText(text.substring(0, text.length()-1), coords.get(0), coords.get(1), graphicsPlane.getHeight());
+            switch(commandType) {
+                case Line:
+                    values = parseTwoCoordinateInput(input);
+                    if (values.size() == 4) {
+                        graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
+                    }
+                    break;
+                case Circle:
+                    values = parseThreeDigitInput(input);
+                    if (values.size() == 3) {
+                        graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, false), Color.black);
+                    }
+                    break;
+                case Rectangle:
+                    values = parseTwoCoordinateInput(input);
+                    if (values.size() == 4) {
+                        graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, false), Color.black);
+                    }
+                    break;
+                case FillCircle:
+                    values = parseThreeDigitInput(input);
+                    if (values.size() == 3) {
+                        graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), Color.black);
+                    }
+                    break;
+                case FillRectangle:
+                    values = parseTwoCoordinateInput(input);
+                    if (values.size() == 4) {
+                        graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), Color.black);
+                    }
+                    break;
+                case TextAt:
+                    values = extractCoordinate(input);
+                    String text = extractText(input);
+                    graphicsPlane.drawText(text,
+                            values.get(0),
+                            values.get(1),
+                            graphicsPlane.getHeight());
+                    break;
+                case BoundingBox:
+                    if(boundingBox == null) {
+                        boundingBox = new BoundingBox(graphicsPlane.getWidth(), graphicsPlane.getHeight());
+                    }
 
-                inputParsed = true;
-            }else if(input.contains("BOUNDING-BOX")){
-
-                /**
-                 * Changing Bounding Box Value in Scala
-                 */
-
-                if(boundingBox == null) {
-                    boundingBox = new BoundingBox(graphicsPlane.getWidth(), graphicsPlane.getHeight());
-                }
-
-                List<Integer> coords;
-                coords = parseTwoCoordinateInput(input);
-                //(BOUNDING-BOX (50 50) (500 500))
-                if (coords.size() != 4){
-                    JOptionPane.showMessageDialog(null, "ERROR IN COMMAND");
-                }else{
-                    boundingBox.setBottomLeftCoordinate(coords.get(0), coords.get(1));
-                    boundingBox.setTopRightCoordinate(coords.get(2), coords.get(3));
-                }
-
-                /*
-                if ((boundingBox.getTopRightCoordinate()._1() == null) ||
-                    (boundingBox.getTopRightCoordinate()._2() == null) ||
-                    (boundingBox.getBottomLeftCoordinate()._1() == null) ||
-                    (boundingBox.getBottomLeftCoordinate()._2() == null))
-                {
-                    JOptionPane.showMessageDialog(null, "Bounding Box Outside of Area");
-                }
-                */
-
-                /* Dont think we need to draw this?
-                else{
-                    graphicsPlane.drawPixels(FigurTegnerenScala.square((Integer) boundingBox.getBottomLeftCoordinate()._1(),
-                                                                (Integer) boundingBox.getTopRightCoordinate()._1(),
-                                                                (Integer) boundingBox.getBottomLeftCoordinate()._2(),
-                                                                (Integer) boundingBox.getTopRightCoordinate()._2()), Color.black);
-                    graphicsPlane.fillRectangle(Color.GRAY, (Integer) boundingBox.getBottomLeftCoordinate()._1(),
-                                                            (Integer) boundingBox.getBottomLeftCoordinate()._2(),
-                                                            (Integer) boundingBox.getTopRightCoordinate()._1(),
-                                                            (Integer) boundingBox.getTopRightCoordinate()._2());
-                }
-                */
-
-                /**
-                 * DRAW BOUNDING BOX
-                 */
-                inputParsed = true;
-            }else if(input.contains("FILL") & input.contains("RECTANGLE")) {
-                /**
-                 * FILL OBJECT WITH COLOR
-                 */
-                List<Integer> values = parseTwoCoordinateInput(input);
-                if (values.size() == 4) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), Color.black);
-                    inputParsed = true;
-                }
-
-                inputParsed = true;
-            }else if(input.contains("FILL") & input.contains("CIRCLE")) {
-                List<Integer> values = parseThreeDigitInput(input);
-                if (values.size() == 3) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), Color.black);
-                    inputParsed = true;
-                }
-            }else if(input.compareTo("CLR") == 0){
-                graphicsPlane.fill(Color.WHITE);
-                boundingBox = null;
-                inputParsed = true;
+                    values = parseTwoCoordinateInput(input);
+                    //(BOUNDING-BOX (50 50) (500 500))
+                    if (values.size() != 4){
+                        JOptionPane.showMessageDialog(null, "ERROR IN COMMAND");
+                    }else{
+                        boundingBox.setBottomLeftCoordinate(values.get(0), values.get(1));
+                        boundingBox.setTopRightCoordinate(values.get(2), values.get(3));
+                    }
+                    break;
+                case Clear:
+                    graphicsPlane.fill(Color.WHITE);
+                    boundingBox = null;
+                    break;
+                case Unknown:
+                    JOptionPane.showMessageDialog(null, "Dafuq u doing my boi");
+                    return;
             }
 
-            if (inputParsed){
-                outputConsole.addTextToField(getText());
-                setText(null);
-            }else {
-                JOptionPane.showMessageDialog(null, "Dafuq u doing my boi");
-            }
+            outputConsole.addTextToField(getText());
+            setText(null);
         }
+    }
+
+    List<Integer> extractCoordinate(String input) {
+        Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\((\\d+)\\s(\\d+)\\)\\s(.*)\\)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = textAtPattern.matcher(input);
+
+        if(matcher.find()) {
+            List<Integer> res = new ArrayList<Integer>();
+            res.add(Integer.parseInt(matcher.group(1)));
+            res.add(Integer.parseInt(matcher.group(2)));
+            return res;
+        }
+
+        return new ArrayList<Integer>();
+    }
+
+    String extractText(String input) {
+        Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\(\\d+\\s\\d+\\)\\s(.*)\\)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = textAtPattern.matcher(input);
+
+        if(matcher.find()) {
+            return matcher.group(1);
+        }
+
+        return "";
     }
 
     List<Integer> parseTwoCoordinateInput(String input) {
@@ -226,16 +229,3 @@ public class InputConsole extends JTextField {
         return res;
     }
 }
-
-/*
-        if (pattern.find()) {
-            Pattern integerPattern = Pattern.compile("-?\\d+");
-            Matcher matcher = integerPattern.matcher(integerPattern.group());
-
-            List<Integer> res = new ArrayList<Integer>();
-
-            while (matcher.find()) {
-                res.add(Integer.parseInt(matcher.group()));
-            }
-        }
- */
