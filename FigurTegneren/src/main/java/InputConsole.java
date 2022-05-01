@@ -37,48 +37,81 @@ public class InputConsole extends JTextField {
      * (FILL c g)                               c = color, g = object to draw
      */
 
-    private static class PatternMatcher {
-        enum CommandType {
-            Line,
-            Circle,
-            Rectangle,
-            FillCircle,
-            FillRectangle,
-            BoundingBox,
-            TextAt,
-            Clear,
-            Unknown
+    private void drawMultipleCommands(String input) {
+        final Matcher matcher = PatternMatcher.objectPattern.matcher(input);
+        while (matcher.find()) {
+            String commandInput = matcher.group();
+            PatternMatcher.CommandType type = PatternMatcher.matchCommand(commandInput);
+            drawCommand(type, commandInput);
         }
+    }
 
-        static Pattern recPattern = Pattern.compile("\\(RECTANGLE\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
-        static Pattern circPattern = Pattern.compile("\\(CIRCLE\\s\\(\\d+\\s\\d+\\)\\s\\d+\\)", Pattern.CASE_INSENSITIVE);
-        static Pattern linePattern = Pattern.compile("\\(LINE\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
-        static Pattern filledRecPattern = Pattern.compile("\\(FILL-RECTANGLE\\s[a-z]\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
-        static Pattern filledCircPattern = Pattern.compile("\\(FILL-CIRCLE\\s[a-z]\\s\\(\\d+\\s\\d+\\)\\s\\d+\\)", Pattern.CASE_INSENSITIVE);
-        static Pattern bbPattern = Pattern.compile("\\(BOUNDING-BOX\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
-        static Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\(\\d+\\s\\d+\\)\\s.*\\)", Pattern.CASE_INSENSITIVE);
-        static Pattern clrPattern = Pattern.compile("(CLR)", Pattern.CASE_INSENSITIVE);
+    private void drawCommand(PatternMatcher.CommandType type, String input) {
+        Color fillColor;
+        List<Integer> values;
 
-        public static CommandType matchCommand(String input) {
-            if(recPattern.matcher(input).find()) {
-                return CommandType.Rectangle;
-            } else if (circPattern.matcher(input).find()) {
-                return CommandType.Circle;
-            } else if (linePattern.matcher(input).find()) {
-                return CommandType.Line;
-            } else if (filledCircPattern.matcher(input).find()) {
-                return CommandType.FillCircle;
-            } else if (filledRecPattern.matcher(input).find()) {
-                return CommandType.FillRectangle;
-            } else if (bbPattern.matcher(input).find()) {
-                return CommandType.BoundingBox;
-            } else if (textAtPattern.matcher(input).find()) {
-                return CommandType.TextAt;
-            } else if (clrPattern.matcher(input).find()) {
-                return CommandType.Clear;
-            } else {
-                return CommandType.Unknown;
-            }
+        switch(type) {
+            case Line:
+                values = parseTwoCoordinateInput(input);
+                if (values.size() == 4) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
+                }
+                break;
+            case Circle:
+                values = parseThreeDigitInput(input);
+                if (values.size() == 3) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, false), Color.black);
+                }
+                break;
+            case Rectangle:
+                values = parseTwoCoordinateInput(input);
+                if (values.size() == 4) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, false), Color.black);
+                }
+                break;
+            case FillCircle:
+                values = parseThreeDigitInput(input);
+                fillColor = parseFillColorInput(input);
+                if (values.size() == 3) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),values.get(2)*8, boundingBox, true), fillColor);
+                }
+                break;
+            case FillRectangle:
+                values = parseTwoCoordinateInput(input);
+                fillColor = parseFillColorInput(input);
+                if (values.size() == 4) {
+                    graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), fillColor);
+                }
+                break;
+            case TextAt:
+                values = extractCoordinate(input);
+                String text = extractText(input);
+                graphicsPlane.drawText(text,
+                        values.get(0),
+                        values.get(1),
+                        graphicsPlane.getHeight());
+                break;
+            case BoundingBox:
+                if(boundingBox == null) {
+                    boundingBox = new BoundingBox(graphicsPlane.getWidth(), graphicsPlane.getHeight());
+                }
+
+                values = parseTwoCoordinateInput(input);
+                //(BOUNDING-BOX (50 50) (500 500))
+                if (values.size() != 4){
+                    JOptionPane.showMessageDialog(null, "ERROR IN COMMAND");
+                }else{
+                    boundingBox.setBottomLeftCoordinate(values.get(0), values.get(1));
+                    boundingBox.setTopRightCoordinate(values.get(2), values.get(3));
+                }
+                break;
+            case Clear:
+                graphicsPlane.fill(Color.WHITE);
+                boundingBox = null;
+                break;
+            case Unknown:
+                JOptionPane.showMessageDialog(null, "Dafuq u doing my boi");
+                return;
         }
     }
 
@@ -88,72 +121,12 @@ public class InputConsole extends JTextField {
 
             String input = getText().toUpperCase();
 
-            Color fillColor;
-            List<Integer> values;
             PatternMatcher.CommandType commandType = PatternMatcher.matchCommand(input);
 
-            switch(commandType) {
-                case Line:
-                    values = parseTwoCoordinateInput(input);
-                    if (values.size() == 4) {
-                        graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
-                    }
-                    break;
-                case Circle:
-                    values = parseThreeDigitInput(input);
-                    if (values.size() == 3) {
-                        graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, false), Color.black);
-                    }
-                    break;
-                case Rectangle:
-                    values = parseTwoCoordinateInput(input);
-                    if (values.size() == 4) {
-                        graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, false), Color.black);
-                    }
-                    break;
-                case FillCircle:
-                    values = parseThreeDigitInput(input);
-                    fillColor = parseFillColorInput(input);
-                    if (values.size() == 3) {
-                        graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), fillColor);
-                    }
-                    break;
-                case FillRectangle:
-                    values = parseTwoCoordinateInput(input);
-                    fillColor = parseFillColorInput(input);
-                    if (values.size() == 4) {
-                        graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), fillColor);
-                    }
-                    break;
-                case TextAt:
-                    values = extractCoordinate(input);
-                    String text = extractText(input);
-                    graphicsPlane.drawText(text,
-                            values.get(0),
-                            values.get(1),
-                            graphicsPlane.getHeight());
-                    break;
-                case BoundingBox:
-                    if(boundingBox == null) {
-                        boundingBox = new BoundingBox(graphicsPlane.getWidth(), graphicsPlane.getHeight());
-                    }
-
-                    values = parseTwoCoordinateInput(input);
-                    //(BOUNDING-BOX (50 50) (500 500))
-                    if (values.size() != 4){
-                        JOptionPane.showMessageDialog(null, "ERROR IN COMMAND");
-                    }else{
-                        boundingBox.setBottomLeftCoordinate(values.get(0), values.get(1));
-                        boundingBox.setTopRightCoordinate(values.get(2), values.get(3));
-                    }
-                    break;
-                case Clear:
-                    graphicsPlane.fill(Color.WHITE);
-                    boundingBox = null;
-                    break;
-                case Unknown:
-                    JOptionPane.showMessageDialog(null, "Dafuq u doing my boi");
-                    return;
+            if(commandType == PatternMatcher.CommandType.Draw) {
+                drawMultipleCommands(input);
+            } else {
+                drawCommand(commandType, input);
             }
 
             outputConsole.addTextToField(getText());
@@ -234,22 +207,6 @@ public class InputConsole extends JTextField {
             while (m2.find()) {
                 res.add(Integer.parseInt(m2.group()));
             }
-        }
-        return res;
-    }
-
-    List<Integer> parseDigitsFromStringInput(String input){
-        //Returns all digits in a string as a list of integers
-
-        List<Integer> res = new ArrayList<Integer>();
-
-        input = input.replaceAll("[^\\d]", " ");
-        input = input.trim();
-        input = input.replaceAll(" +", " ");
-        String[] integerStrings = input.split(" ");
-
-        for (String string: integerStrings){
-            res.add(Integer.parseInt(string));
         }
         return res;
     }
