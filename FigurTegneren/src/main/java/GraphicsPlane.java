@@ -33,15 +33,8 @@ public class GraphicsPlane extends JPanel {
     }
 
     public void drawPixels(List<List<Object>> pixels, Color color) {
-        if (setup && pixels.size() == 2) {
-            for (int i = 0; i < pixels.get(0).size(); i++)
-            {
-                int pixel_x = (int)pixels.get(0).get(i);
-                int pixel_y = getHeight() - (int)pixels.get(1).get(i);
-                bi.setRGB(pixel_x, pixel_y, color.getRGB());
-            }
-            updateUI();
-        }
+        Thread t = new highlightThread(this, pixels, color);
+        t.start();
     }
 
     public void drawText(String text, int x, int y, int screenHeight) {
@@ -70,19 +63,4 @@ public class GraphicsPlane extends JPanel {
             updateUI();
         }
     }
-
-    public void fillRectangle(Color color, int x1, int y1, int x2, int y2) {
-        if (setup) {
-            for (int x = x1; x < x2; x++)
-            {
-                for (int y = getHeight() - y1; y > getHeight()-y2; y--)
-                {
-                    bi.setRGB(x, y, color.getRGB());
-                }
-            }
-            updateUI();
-        }
-    }
-
-
 }
