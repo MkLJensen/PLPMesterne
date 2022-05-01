@@ -52,40 +52,40 @@ public class InputConsole extends JTextField {
 
         switch(type) {
             case Line:
-                values = parseTwoCoordinateInput(input);
+                values = InputParser.parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
                     graphicsPlane.drawPixels(FigurTegnerenScala.line(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox), Color.black);
                 }
                 break;
             case Circle:
-                values = parseThreeDigitInput(input);
+                values = InputParser.parseThreeDigitInput(input);
                 if (values.size() == 3) {
                     graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, false), Color.black);
                 }
                 break;
             case Rectangle:
-                values = parseTwoCoordinateInput(input);
+                values = InputParser.parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
                     graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, false), Color.black);
                 }
                 break;
             case FillCircle:
-                values = parseThreeDigitInput(input);
-                fillColor = parseFillColorInput(input);
+                values = InputParser.parseThreeDigitInput(input);
+                fillColor = InputParser.parseFillColorInput(input);
                 if (values.size() == 3) {
                     graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),values.get(2)*8, boundingBox, true), fillColor);
                 }
                 break;
             case FillRectangle:
-                values = parseTwoCoordinateInput(input);
-                fillColor = parseFillColorInput(input);
+                values = InputParser.parseTwoCoordinateInput(input);
+                fillColor = InputParser.parseFillColorInput(input);
                 if (values.size() == 4) {
                     graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), fillColor);
                 }
                 break;
             case TextAt:
-                values = extractCoordinate(input);
-                String text = extractText(input);
+                values = InputParser.extractCoordinate(input);
+                String text = InputParser.extractText(input);
                 graphicsPlane.drawText(text,
                         values.get(0),
                         values.get(1),
@@ -96,7 +96,7 @@ public class InputConsole extends JTextField {
                     boundingBox = new BoundingBox(graphicsPlane.getWidth(), graphicsPlane.getHeight());
                 }
 
-                values = parseTwoCoordinateInput(input);
+                values = InputParser.parseTwoCoordinateInput(input);
                 //(BOUNDING-BOX (50 50) (500 500))
                 if (values.size() != 4){
                     JOptionPane.showMessageDialog(null, "ERROR IN COMMAND");
@@ -132,82 +132,5 @@ public class InputConsole extends JTextField {
             outputConsole.addTextToField(getText());
             setText(null);
         }
-    }
-
-    Color parseFillColorInput(String input) {
-        Pattern fillPattern = Pattern.compile("\\((.*)\\s([a-z]).*\\)", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = fillPattern.matcher(input);
-
-        if(matcher.find()) {
-            String character = matcher.group(2).toLowerCase();
-
-            switch(character) {
-                case "r":
-                    return Color.red;
-                case "g":
-                    return Color.green;
-                case "b":
-                    return Color.blue;
-            }
-
-            return Color.black;
-        } else {
-            return Color.black;
-        }
-    }
-
-    List<Integer> extractCoordinate(String input) {
-        Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\((\\d+)\\s(\\d+)\\)\\s(.*)\\)", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = textAtPattern.matcher(input);
-
-        if(matcher.find()) {
-            List<Integer> res = new ArrayList<Integer>();
-            res.add(Integer.parseInt(matcher.group(1)));
-            res.add(Integer.parseInt(matcher.group(2)));
-            return res;
-        }
-
-        return new ArrayList<Integer>();
-    }
-
-    String extractText(String input) {
-        Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\(\\d+\\s\\d+\\)\\s(.*)\\)", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = textAtPattern.matcher(input);
-
-        if(matcher.find()) {
-            return matcher.group(1);
-        }
-
-        return "";
-    }
-
-    List<Integer> parseTwoCoordinateInput(String input) {
-        List<Integer> res = new ArrayList<Integer>();
-        Pattern p1 = Pattern.compile("\\(\\d+ \\d+\\) \\(\\d+ \\d+\\)");
-        Matcher m1 = p1.matcher(input);
-
-        if (m1.find()) {
-            Pattern p2 = Pattern.compile("-?\\d+");
-            Matcher m2 = p2.matcher(input);
-            while (m2.find()) {
-                res.add(Integer.parseInt(m2.group()));
-            }
-        }
-        return res;
-    }
-
-    List<Integer> parseThreeDigitInput(String input) {
-        List<Integer> res = new ArrayList<Integer>();
-        Pattern p1 = Pattern.compile("\\(\\d+ \\d+\\) \\d+");
-        Matcher m1 = p1.matcher(input);
-
-        if (m1.find()) {
-            Pattern p2 = Pattern.compile("-?\\d+");
-            Matcher m2 = p2.matcher(input);
-            while (m2.find()) {
-                res.add(Integer.parseInt(m2.group()));
-            }
-        }
-        return res;
     }
 }
