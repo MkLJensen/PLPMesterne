@@ -202,14 +202,6 @@ object FigurTegnerenScala {
       val yCoordinates = y1 to y2 by 1
       val xCoordinates = List.fill(yCoordinates.length)(x1)
       filledSquare(x1+1, y1, x2, y2, xCoords++xCoordinates, yCoords++yCoordinates)
-
-      /* Other solution. Both seem slow
-      if(y1 >= y2) {
-        filledSquare(x1+1, yCoords.last, x2, y2, xCoords.::(x1), yCoords.::(y1))
-      } else {
-        filledSquare(x1, y1+1, x2, y2, xCoords.::(x1), yCoords.::(y1))
-      }
-      */
     }
   }
 }
