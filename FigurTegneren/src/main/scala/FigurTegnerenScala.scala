@@ -98,7 +98,15 @@ object FigurTegnerenScala {
       List[java.util.List[Int]]().asJava
     }
     else {
-      clipBoundingBox(boundingBox, lineRunner(x1, x2, y1, y2)).asJava
+      if (x1 < x2 && y1 <= y2){
+        clipBoundingBox(boundingBox, lineRunner(x1,x2,y1,y2)).asJava
+      } else if (x2 < x1 && y1 <= y2){
+        clipBoundingBox(boundingBox, lineRunner(x2,x1,y1,y2)).asJava
+      } else if (x1 <= x2 && y2 < y1){
+        clipBoundingBox(boundingBox, lineRunner(x1,x2,y2,y1)).asJava
+      } else{
+        clipBoundingBox(boundingBox, lineRunner(x2,x1,y2,y1)).asJava
+      }
     }
   }
 
