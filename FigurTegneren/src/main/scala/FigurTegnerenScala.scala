@@ -61,8 +61,6 @@ object FigurTegnerenScala {
     val dx = (x2-x1).abs
     val dy = (y2-y1).abs
 
-
-
     if(dx >= dy) {
       if(dy != 0) {
         lineImpl(x1, x2, y1, y2, x1.toFloat, y1.toFloat, 1, dy.toFloat/dx.toFloat, dx, 1, List[Int](x1), List[Int](y1))
@@ -100,18 +98,7 @@ object FigurTegnerenScala {
       List[java.util.List[Int]]().asJava
     }
     else {
-      if (x1 < x2 && y1 <= y2) {
-        clipBoundingBox(boundingBox, lineRunner(x1, x2, y1, y2)).asJava
-      }
-      else if (x2 < x1 && y1 <= y2) {
-        clipBoundingBox(boundingBox, lineRunner(x2, x1, y1, y2)).asJava
-      }
-      else if (x1 <= x2 && y2 < y1) {
-        clipBoundingBox(boundingBox, lineRunner(x1, x2, y2, y1)).asJava
-      }
-      else {
-        clipBoundingBox(boundingBox, lineRunner(x2, x1, y2, y1)).asJava
-      }
+      clipBoundingBox(boundingBox, lineRunner(x1, x2, y1, y2)).asJava
     }
   }
 

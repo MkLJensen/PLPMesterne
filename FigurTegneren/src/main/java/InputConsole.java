@@ -51,6 +51,12 @@ public class InputConsole extends JTextField {
         List<Integer> values;
 
         switch(type) {
+            case BarChart:
+                drawBarChart();
+                break;
+            case PieChart:
+                drawPieChart();
+                break;
             case Line:
                 values = InputParser.parseTwoCoordinateInput(input);
                 if (values.size() == 4) {
@@ -132,5 +138,58 @@ public class InputConsole extends JTextField {
             outputConsole.addTextToField(getText());
             setText(null);
         }
+    }
+
+    public void drawBarChart(){
+        //Bars
+        setText("(RECTANGLE (100 120) (400 140))");
+        fireActionPerformed();
+        setText("(RECTANGLE (100 160) (300 180))");
+        fireActionPerformed();
+        setText("(RECTANGLE (100 200) (200 220))");
+        fireActionPerformed();
+
+        //Bar values
+        setText("(TEXT-AT (405 125) 300)");
+        fireActionPerformed();
+        setText("(TEXT-AT (305 165) 200)");
+        fireActionPerformed();
+        setText("(TEXT-AT (205 205) 100)");
+        fireActionPerformed();
+
+        //X-axis
+        setText("(TEXT-AT (100 88) 0)");
+        fireActionPerformed();
+        setText("(TEXT-AT (200 88) 100)");
+        fireActionPerformed();
+        setText("(TEXT-AT (300 88) 200)");
+        fireActionPerformed();
+        setText("(TEXT-AT (400 88) 300)");
+        fireActionPerformed();
+        setText("(TEXT-AT (500 88) 400)");
+        fireActionPerformed();
+
+        //Y-axis
+        setText("(TEXT-AT (110 125) Scala)");
+        fireActionPerformed();
+        setText("(TEXT-AT (110 165) More Scala)");
+        fireActionPerformed();
+        setText("(TEXT-AT (110 205) Prolog)");
+        fireActionPerformed();
+
+        //Edge of barchart
+        setText("(RECTANGLE (100 100) (500 240))");
+        fireActionPerformed();
+
+        //Title or whatever
+        setText("(TEXT-AT (200 50) WHAT DO YOU EXPECT FROM LIFE?)");
+        fireActionPerformed();
+    }
+
+    public void drawPieChart(){
+        setText("(CIRCLE (800 200) 100)");
+        fireActionPerformed();
+        setText("(LINE (800 200) (800 100))");
+        fireActionPerformed();
     }
 }

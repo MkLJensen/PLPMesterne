@@ -11,6 +11,8 @@ public class PatternMatcher {
         TextAt,
         Clear,
         Draw,
+        BarChart,
+        PieChart,
         Unknown
     }
 
@@ -25,6 +27,8 @@ public class PatternMatcher {
     private static Pattern bbPattern = Pattern.compile("\\(BOUNDING-BOX\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
     private static Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\(\\d+\\s\\d+\\)\\s.*\\)", Pattern.CASE_INSENSITIVE);
     private static Pattern clrPattern = Pattern.compile("(CLR)", Pattern.CASE_INSENSITIVE);
+    private static Pattern barChartPattern = Pattern.compile("BARCHART", Pattern.CASE_INSENSITIVE);
+    private static Pattern pieChartPattern = Pattern.compile("PIECHART", Pattern.CASE_INSENSITIVE);
 
     public static CommandType matchCommand(String input) {
         if(drawPattern.matcher(input).find()) {
@@ -45,6 +49,10 @@ public class PatternMatcher {
             return CommandType.TextAt;
         } else if (clrPattern.matcher(input).find()) {
             return CommandType.Clear;
+        } else if (barChartPattern.matcher(input).find()) {
+            return CommandType.BarChart;
+        }else if (pieChartPattern.matcher(input).find()) {
+            return CommandType.PieChart;
         } else {
             return CommandType.Unknown;
         }
