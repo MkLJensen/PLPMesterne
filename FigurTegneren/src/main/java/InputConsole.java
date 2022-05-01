@@ -88,6 +88,7 @@ public class InputConsole extends JTextField {
 
             String input = getText().toUpperCase();
 
+            Color fillColor;
             List<Integer> values;
             PatternMatcher.CommandType commandType = PatternMatcher.matchCommand(input);
 
@@ -112,14 +113,16 @@ public class InputConsole extends JTextField {
                     break;
                 case FillCircle:
                     values = parseThreeDigitInput(input);
+                    fillColor = parseFillColorInput(input);
                     if (values.size() == 3) {
-                        graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), Color.black);
+                        graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, true), fillColor);
                     }
                     break;
                 case FillRectangle:
                     values = parseTwoCoordinateInput(input);
+                    fillColor = parseFillColorInput(input);
                     if (values.size() == 4) {
-                        graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), Color.black);
+                        graphicsPlane.drawPixels(FigurTegnerenScala.square(values.get(0),values.get(2),values.get(1),values.get(3), boundingBox, true), fillColor);
                     }
                     break;
                 case TextAt:
@@ -155,6 +158,28 @@ public class InputConsole extends JTextField {
 
             outputConsole.addTextToField(getText());
             setText(null);
+        }
+    }
+
+    Color parseFillColorInput(String input) {
+        Pattern fillPattern = Pattern.compile("\\((.*)\\s([a-z]).*\\)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = fillPattern.matcher(input);
+
+        if(matcher.find()) {
+            String character = matcher.group(2).toLowerCase();
+
+            switch(character) {
+                case "r":
+                    return Color.red;
+                case "g":
+                    return Color.green;
+                case "b":
+                    return Color.blue;
+            }
+
+            return Color.black;
+        } else {
+            return Color.black;
         }
     }
 
