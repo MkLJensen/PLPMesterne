@@ -187,9 +187,36 @@ public class InputConsole extends JTextField {
     }
 
     public void drawPieChart(){
+        // Circle
+        //setText("(FILL-CIRCLE R (800 200) 100)");
         setText("(CIRCLE (800 200) 100)");
         fireActionPerformed();
+
+        //Lines in circle
         setText("(LINE (800 200) (800 100))");
+        fireActionPerformed();
+        setText("(LINE (800 200) (900 200))");
+        fireActionPerformed();
+        setText("(LINE (800 200) (840 290))");
+        fireActionPerformed();
+
+        //Labels
+        setText("(TEXT-AT (840 230) 21%)");
+        fireActionPerformed();
+        setText("(TEXT-AT (830 150) 25%)");
+        fireActionPerformed();
+        setText("(TEXT-AT (750 200) 54%)");
+        fireActionPerformed();
+
+        setText("(TEXT-AT (650 200) RUNER) ");
+        fireActionPerformed();
+        setText("(TEXT-AT (900 250) Hulemalerier)");
+        fireActionPerformed();
+        setText("(TEXT-AT (900 140) Blindeskrift)");
+        fireActionPerformed();
+
+        //Title
+        setText("(TEXT-AT (675 50) POPULARITY OF PROGRAMMING LANGUAGES?)");
         fireActionPerformed();
     }
 }
