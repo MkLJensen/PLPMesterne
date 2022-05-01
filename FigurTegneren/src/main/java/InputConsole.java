@@ -35,6 +35,7 @@ public class InputConsole extends JTextField {
      * (BOUNDING-BOX (x1 y1) (x2 y2))           Same @Param as Square
      * (DRAW c g1 g2 g3 ... )                   Several figure, with the preceding commands and color c
      * (FILL c g)                               c = color, g = object to draw
+     * (BARCHART)                               Demo, displays a predefined bar chart.
      */
 
     private static class PatternMatcher {
@@ -47,7 +48,9 @@ public class InputConsole extends JTextField {
             BoundingBox,
             TextAt,
             Clear,
-            Unknown
+            Unknown,
+            BarChart,
+            PieChart
         }
 
         static Pattern recPattern = Pattern.compile("\\(RECTANGLE\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
@@ -58,6 +61,8 @@ public class InputConsole extends JTextField {
         static Pattern bbPattern = Pattern.compile("\\(BOUNDING-BOX\\s\\(\\d+\\s\\d+\\)\\s\\(\\d+\\s\\d+\\)\\)", Pattern.CASE_INSENSITIVE);
         static Pattern textAtPattern = Pattern.compile("\\(TEXT-AT\\s\\(\\d+\\s\\d+\\)\\s.*\\)", Pattern.CASE_INSENSITIVE);
         static Pattern clrPattern = Pattern.compile("(CLR)", Pattern.CASE_INSENSITIVE);
+        static Pattern barChartPattern = Pattern.compile(("BARCHART"), Pattern.CASE_INSENSITIVE);
+        static Pattern pieChartPattern = Pattern.compile(("PIECHART"), Pattern.CASE_INSENSITIVE);
 
         public static CommandType matchCommand(String input) {
             if(recPattern.matcher(input).find()) {
@@ -76,6 +81,10 @@ public class InputConsole extends JTextField {
                 return CommandType.TextAt;
             } else if (clrPattern.matcher(input).find()) {
                 return CommandType.Clear;
+            } else if (barChartPattern.matcher(input).find()){
+                return CommandType.BarChart;
+            } else if (pieChartPattern.matcher(input).find()) {
+                return CommandType.PieChart;
             } else {
                 return CommandType.Unknown;
             }
@@ -92,6 +101,12 @@ public class InputConsole extends JTextField {
             PatternMatcher.CommandType commandType = PatternMatcher.matchCommand(input);
 
             switch(commandType) {
+                case BarChart:
+                    drawBarChart();
+                    break;
+                case PieChart:
+                    drawPieChart();
+                    break;
                 case Line:
                     values = parseTwoCoordinateInput(input);
                     if (values.size() == 4) {
@@ -227,5 +242,58 @@ public class InputConsole extends JTextField {
             res.add(Integer.parseInt(string));
         }
         return res;
+    }
+
+    public void drawBarChart(){
+        //Bars
+        setText("(RECTANGLE (100 120) (400 140))");
+        fireActionPerformed();
+        setText("(RECTANGLE (100 160) (300 180))");
+        fireActionPerformed();
+        setText("(RECTANGLE (100 200) (200 220))");
+        fireActionPerformed();
+
+        //Bar values
+        setText("(TEXT-AT (405 125) 300)");
+        fireActionPerformed();
+        setText("(TEXT-AT (305 165) 200)");
+        fireActionPerformed();
+        setText("(TEXT-AT (205 205) 100)");
+        fireActionPerformed();
+
+        //X-axis
+        setText("(TEXT-AT (100 88) 0)");
+        fireActionPerformed();
+        setText("(TEXT-AT (200 88) 100)");
+        fireActionPerformed();
+        setText("(TEXT-AT (300 88) 200)");
+        fireActionPerformed();
+        setText("(TEXT-AT (400 88) 300)");
+        fireActionPerformed();
+        setText("(TEXT-AT (500 88) 400)");
+        fireActionPerformed();
+
+        //Y-axis
+        setText("(TEXT-AT (110 125) Scala)");
+        fireActionPerformed();
+        setText("(TEXT-AT (110 165) More Scala)");
+        fireActionPerformed();
+        setText("(TEXT-AT (110 205) Prolog)");
+        fireActionPerformed();
+
+        //Edge of barchart
+        setText("(RECTANGLE (100 100) (500 240))");
+        fireActionPerformed();
+
+        //Title or whatever
+        setText("(TEXT-AT (200 50) WHAT DO YOU EXPECT FROM LIFE?)");
+        fireActionPerformed();
+    }
+
+    public void drawPieChart(){
+        setText("(CIRCLE (800 200) 100)");
+        fireActionPerformed();
+        setText("(LINE (800 200) (800 100))");
+        fireActionPerformed();
     }
 }
