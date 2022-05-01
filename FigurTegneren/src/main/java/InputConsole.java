@@ -66,7 +66,7 @@ public class InputConsole extends JTextField {
             case Circle:
                 values = InputParser.parseThreeDigitInput(input);
                 if (values.size() == 3) {
-                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),3000, boundingBox, false), Color.black);
+                    graphicsPlane.drawPixels(FigurTegnerenScala.circle(values.get(0),values.get(1),values.get(2),values.get(2)*8, boundingBox, false), Color.black);
                 }
                 break;
             case Rectangle:
