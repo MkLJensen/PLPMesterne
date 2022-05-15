@@ -60,7 +60,7 @@ l"""{
    3. x2b == 10 premise
    4. x > x2b algebra 2 3
    5. !(x <= x2b) algebra 4
-   6. !(x >= x1b & x <= x2b & y >= y1b & y <= y2b & k == true) ???
+   6. !(x >= x1b & x <= x2b & y >= y1b & y <= y2b & k == true) premise
    7. {
         8. (x >= x1b & x <= x2b & y >= y1b & y <= y2b & k == true) assume
         9. ⊥ ¬e 8 6
