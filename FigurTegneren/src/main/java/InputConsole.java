@@ -208,15 +208,15 @@ public class InputConsole extends JTextField {
         setText("(TEXT-AT (750 200) 54%)");
         fireActionPerformed();
 
-        setText("(TEXT-AT (650 200) RUNER) ");
+        setText("(TEXT-AT (650 200) Prolog) ");
         fireActionPerformed();
-        setText("(TEXT-AT (900 250) Hulemalerier)");
+        setText("(TEXT-AT (900 250) Scala)");
         fireActionPerformed();
-        setText("(TEXT-AT (900 140) Blindeskrift)");
+        setText("(TEXT-AT (900 140) Other)");
         fireActionPerformed();
 
         //Title
-        setText("(TEXT-AT (675 50) POPULARITY OF PROGRAMMING LANGUAGES?)");
+        setText("(TEXT-AT (675 50) POPULARITY OF PROGRAMMING LANGUAGES)");
         fireActionPerformed();
     }
 }
